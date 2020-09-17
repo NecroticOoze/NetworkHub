@@ -1,3 +1,4 @@
 hub/
 db_init.py
 app/__pycache__/
+app/static/uploads/*
