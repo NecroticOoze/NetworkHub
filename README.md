@@ -1,5 +1,5 @@
 # NetworkHub
-Repository for the NetworkHub project made by Blane Lysak. Essentially this is easy, cheap, efficient_(lol)_ LAN Storage.
+Repository for the NetworkHub project made by Blane Lysak. Essentially this is easy, cheap, efficient _(lol)_ LAN Storage.
 
 ## The problem
 Basically, I wanted external storage that others on my network could access. At the same time,
