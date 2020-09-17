@@ -1,0 +1,30 @@
+{% extends 'main_layout.html' %}
+{% block content %}
+    <div class="container my-2">
+        <div class="card mx-auto" style="width: 550px;">
+            <div class="card-body">
+                <h3 class="card-title border-bottom">Login</h3>
+                <form method="POST">
+                    <div class="form-group">
+                        {{ form.username.label }}
+                        {{ form.username(class="form-control") }}
+                    </div>
+                    <div class="form-group">
+                        {{ form.password.label }}
+                        {{ form.password(class="form-control") }}
+                    </div>
+                    <div class="form-inline">
+                        {{ form.remember_me(class="form-check") }}&nbsp;
+                        {{ form.remember_me.label }}
+                    </div>
+                    <div class="text-center">
+                        {{ form.submit(class="btn btn-lg btn-primary") }}
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock content %}
+{% block js %}
+    
+{% endblock js %}

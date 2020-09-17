@@ -1,0 +1,55 @@
+{% extends 'main_layout.html' %}
+{% block content %}
+<div class="container my-2">
+    <div class="card mx-auto" style="width: 550px;">
+        <div class="card-body">
+            <h3 class="card-title border-bottom">Register</h3>
+            <div class="alert alert-info" role="alert">
+                <strong>Heads up!</strong> You have to wait for an Admin
+                to approve your account.
+            </div>
+            <form method="POST">
+                <div class="form-group">
+                    {{ form.username.label(class="form-control-label") }}
+
+                    {% if form.username.errors %}
+                        {{ form.username(class="form-control form-control is-invalid") }}
+                        <div class="invalid-feedback">
+                            {% for error in form.username.errors %}
+                                <span>{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        {{ form.username(class="form-control form-control") }}
+                    {% endif %}
+                </div>
+                <div class="form-group">
+                    {{ form.password.label }}
+                    {{ form.password(class="form-control",required="true") }}
+                </div>
+                <div class="form-group">
+                    {{ form.confirm_password.label }}
+                    {{ form.confirm_password(class="form-control",required="true") }}
+                </div>
+                <div class="text-center">
+                    {{ form.submit(class="btn btn-lg btn-primary") }}
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock content %}
+{% block js %}
+<script>
+    $(document).ready(()=>$("#submit").attr("disabled","disabled"))
+    document.body.addEventListener("change",(event)=>{
+        if (event.target.id == 'confirm_password' || event.target.id == 'password') {
+            if ($("#confirm_password").val() == $("#password").val()) {
+                $("#submit").removeAttr("disabled")
+            } else {
+                $("#submit").attr("disabled","disabled")
+            }
+        }
+    })
+</script>
+{% endblock js %}

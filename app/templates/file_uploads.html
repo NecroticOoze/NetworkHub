@@ -1,0 +1,45 @@
+{% extends 'main_layout.html' %}
+
+{% block content %}
+<div class="container my-2">
+    <div class="card mx-auto" style="width: 750px;">
+        <div class="card-body">
+            <h3 class="card-title border-bottom">Upload File</h3>
+            <div class="alert alert-info">
+                <strong>Heads Up!</strong> If you don't enter a path,
+                it will be stored by default in the static/uploads folder.
+                The 'Drive' selector will automatically populate when external
+                storage is detected.<br>If no drive is selected, the
+                path will still be within static/uploads.
+            </div>
+            <form method="POST" enctype="multipart/form-data">
+                <div class="form-group">
+                    {{ form.path.label }}
+                    {{ form.path(class="form-control") }}
+                </div>
+                <div class="form-group">
+                    {{ form.drive.label }}
+                    {{ form.drive(class="form-control") }}
+                </div>
+                <div class="form-group">
+                    {{ form.uploaded_file.label }}
+                    {{ form.uploaded_file }}
+                </div>
+                <div class="text-center">
+                    {{ form.submit(class="btn btn-lg btn-primary") }}
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock content %}
+{% block js %}
+    <script>
+        $("#submit").attr("disabled","disabled")
+        document.body.addEventListener("change",event=>{
+            if ($("#uploaded_file").val() != "") {
+                $("#submit").removeAttr("disabled")
+            }
+        })
+    </script>
+{% endblock js %}
