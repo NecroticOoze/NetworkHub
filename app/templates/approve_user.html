@@ -58,10 +58,14 @@
                     'role': role
                     },
                 success=(data)=>{
-                    console.log(data)
                     if (data == "error") {
                         console.log("There was an error. Please check server logs.")
+                    } else if (data == "You cannot disable the only admin account.") {
+                        console.log(data)
+                        that.parentNode.parentNode.children[0].innerHTML = "True"
+                        that.parentNode.parentNode.children[3].innerHTML = `<button class="badge bg-success text-white" onclick="editUser(this)">Edit</button>`
                     } else {
+                        console.log(data)
                         if (active) {
                             that.parentNode.parentNode.children[0].innerHTML = "True"
                         } else {
