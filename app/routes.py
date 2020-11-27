@@ -6,6 +6,9 @@ from app.forms import LoginForm, RegisterForm, UploadFileForm
 from uuid import uuid4
 import os
 
+if not os.path.exists("static/uploads"):
+    os.makedirs("static/uploads")
+
 @app.before_request
 def checkIfBruteForce():
     # print("checking")
@@ -43,7 +46,9 @@ def login():
     form = LoginForm()
     if form.is_submitted():
         user = User.query.filter_by(username=form.username.data).first()
-        if user and bcrypt.check_password_hash(user.password, form.password.data):
+        if user.is_active == False:
+            flash('Login Unsuccessful. Your account is not yet activated.', 'danger')
+        elif user and bcrypt.check_password_hash(user.password, form.password.data):
             login_user(user, remember=form.remember_me.data)
             next_page = request.args.get('next')
             return redirect(next_page) if next_page else redirect(url_for('home'))
@@ -53,8 +58,11 @@ def login():
 
 @app.route('/logout')
 def logout():
-    logout_user()
-    flash("You've successfully been logged out.","success")
+    if current_user.is_authenticated:
+        logout_user()
+        flash("You've successfully been logged out.","success")
+    else:
+        flash("You're currently not logged in.",'info')
     return redirect(url_for('home'))
 
 def save_file(file):
