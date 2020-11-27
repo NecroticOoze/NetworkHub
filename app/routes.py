@@ -6,6 +6,12 @@ from app.forms import LoginForm, RegisterForm, UploadFileForm
 from uuid import uuid4
 import os
 
+@app.before_request
+def checkIfBruteForce():
+    # print("checking")
+    # print(request.full_path)
+    if 'static/uploads' in request.full_path and not current_user.is_authenticated:
+        return redirect(url_for('login', next=request.url))
 
 @app.route('/')
 def home():
@@ -16,8 +22,18 @@ def register():
     if current_user.is_authenticated:
         return redirect(url_for('home'))
     form = RegisterForm()
-    if form.validate_on_submit():
+    if form.is_submitted():
         print(form.data)
+        user = User.query.filter_by(username=form.username.data).first()
+        if user:
+            flash('That username is taken. Please choose a different one.','danger')
+        else:
+            hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
+            user = User(username=form.username.data,password=hashed_password,is_active=False)
+            db.session.add(user)
+            db.session.commit()
+            flash('Account information submitted. Please wait for an admin to approve your account.','info')
+            return redirect(url_for('login'))
     return render_template('register.html', form=form,active='register')
 
 @app.route('/login', methods=['GET','POST'])
@@ -49,9 +65,10 @@ def save_file(file):
     file.save(file_path)
     return (f"{filename}{f_ext}", f"{random_uuid}{f_ext}")
 
-@app.route('/upload-file', methods=['GET','POST'])
 @login_required
+@app.route('/upload-file', methods=['GET','POST'])
 def upload_file():
+    # os.listdir('/Volumes') lists drives on MacOS
     form = UploadFileForm()
     if form.is_submitted():
         # print(form.uploaded_file.data)
@@ -72,3 +89,37 @@ def upload_file():
 def view_files():
     files = UploadedFile.query.all()
     return render_template('view_files.html', files=files, active='view')
+
+@login_required
+@app.route('/approve_user')
+def approve_user():
+    if current_user.role != 'admin':
+        flash('You do not have rights to this section','danger')
+        return redirect(url_for('home'))
+    token = current_user.get_valid_token()
+    users = User.query.all()
+    return render_template('approve_user.html',active='approve_user',users=users,token=token)
+
+@login_required
+@app.route('/approve_user/edit_user',methods=['POST'])
+def edit_user():
+    if current_user.role != 'admin':
+        return "Denied."
+    else:
+        user = current_user.verify_valid_token(request.form["token"])
+        if user == None:
+            return "Invalid Token. Please refresh page."
+        elif len(User.query.filter_by(role='admin').all()) == 1 and request.form["role"] == "admin" and request.form["is_active"] == "false":
+            return "You cannot disable the only admin account."
+        try:
+            updatedUser = User.query.filter_by(username=request.form["username"]).first()
+            active = False if request.form["is_active"] == "false" else True 
+            updatedUser.is_active = active
+            db.session.commit()
+            if active:
+                return f"User '{request.form['username']}' is active."
+            else:
+                return f"User '{request.form['username']}' is not active."
+        except(err):
+            print(err)
+            return "error"

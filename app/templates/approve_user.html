@@ -1,0 +1,77 @@
+{% extends 'main_layout.html' %}
+
+{% block content %}
+
+<div class="container">
+    <h1>All Users</h1>
+    <table class="table table-hover">
+        <thead>
+            <th>Is Active</th>
+            <th>Username</th>
+            <th>Role</th>
+            <th>&nbsp;</th>
+        </thead>
+        
+        <tbody>
+            {% for user in users %}
+            <tr>
+                <td>{{ user.is_active }}</td>
+                <td>{{ user.username }}</td>
+                <td>{{ user.role }}</td>
+                <td><button class="badge bg-success text-white" onclick="editUser(this)">Edit</button></td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+{% endblock content %}
+
+{% block js %}
+
+<script>
+
+    function editUser(that) {
+        that.innerText = "Save"
+        // that.setAttribute({"class":"badge bg-primary text-white","onclick":"saveUser(this)"})
+        that.setAttribute("class","badge  bg-primary text-white")
+        that.setAttribute("onclick","saveUser(this)")
+        let user = that.parentNode.parentNode.children[1].innerText
+        if (that.parentNode.parentNode.children[0].innerText == "True") {
+            that.parentNode.parentNode.children[0].innerHTML = "<div class='form-check'><input class='form-check-input' type='checkbox' id='userActive' checked><label class='form-check-label' for='userActive'>Is Active</label></div>"
+        } else {
+            that.parentNode.parentNode.children[0].innerHTML = "<div class='form-check'><input class='form-check-input' type='checkbox' id='userActive'><label class='form-check-label' for='userActive'>Is Active</label></div>"
+        }
+        // console.log(that.parentNode.parentNode.children[0])
+
+    }
+
+    function saveUser(that) {
+        let user = that.parentNode.parentNode.children[1].innerText
+        let role = that.parentNode.parentNode.children[2].innerText
+        let active = document.getElementById("userActive").checked
+        $.post(url="/approve_user/edit_user",
+                data={
+                    'token': "{{ token }}",
+                    'is_active': active,
+                    'username': user,
+                    'role': role
+                    },
+                success=(data)=>{
+                    console.log(data)
+                    if (data == "error") {
+                        console.log("There was an error. Please check server logs.")
+                    } else {
+                        if (active) {
+                            that.parentNode.parentNode.children[0].innerHTML = "True"
+                        } else {
+                            that.parentNode.parentNode.children[0].innerHTML = "False"
+                        }
+                        that.parentNode.parentNode.children[3].innerHTML = `<button class="badge bg-success text-white" onclick="editUser(this)">Edit</button>`
+                    }
+                })
+    }
+
+</script>
+
+{% endblock js %}

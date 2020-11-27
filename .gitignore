@@ -1,4 +1,6 @@
+.vscode/
 hub/
 db_init.py
 app/__pycache__/
-app/static/uploads/*
+app/static/uploads/*.*
+app/database.db
