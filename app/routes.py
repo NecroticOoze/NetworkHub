@@ -6,8 +6,8 @@ from app.forms import LoginForm, RegisterForm, UploadFileForm
 from uuid import uuid4
 import os
 
-if not os.path.exists("static/uploads"):
-    os.makedirs("static/uploads")
+if not os.path.exists("app/static/uploads"):
+    os.makedirs("app/static/uploads")
 
 @app.before_request
 def checkIfBruteForce():
