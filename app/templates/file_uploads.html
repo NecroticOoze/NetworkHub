@@ -1,5 +1,13 @@
 {% extends 'main_layout.html' %}
 
+{% block extraStyle %}
+    <style>
+        [data-toggle='tooltip'] {
+            cursor: pointer;
+        }
+    </style>
+{% endblock extraStyle %}
+
 {% block content %}
 <div class="container my-2">
     <div class="card mx-auto" style="width: 750px;">
@@ -10,7 +18,7 @@
                 it will be stored by default in the static/uploads folder.
                 The 'Drive' selector will automatically populate when external
                 storage is detected.<br>If no drive is selected, the
-                path will still be within static/uploads.
+                'Drive' will be wherever NetworkHub is located.
             </div>
             <form method="POST" enctype="multipart/form-data">
                 <div class="form-group">
@@ -18,7 +26,7 @@
                     {{ form.path(class="form-control") }}
                 </div>
                 <div class="form-group">
-                    {{ form.drive.label }}
+                    {{ form.drive.label() }}
                     {{ form.drive(class="form-control") }}
                 </div>
                 <div class="form-group">
@@ -35,11 +43,18 @@
 {% endblock content %}
 {% block js %}
     <script>
+        //Drive needs to be disabled, as the functionality is not yet available.
+        document.getElementById("drive").disabled = true
+
         $("#submit").attr("disabled","disabled")
         document.body.addEventListener("change",event=>{
             if ($("#uploaded_file").val() != "") {
                 $("#submit").removeAttr("disabled")
             }
+        })
+
+        $(function () {
+          $('[data-toggle="tooltip"]').tooltip()
         })
     </script>
 {% endblock js %}

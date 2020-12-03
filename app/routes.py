@@ -65,11 +65,11 @@ def logout():
         flash("You're currently not logged in.",'info')
     return redirect(url_for('home'))
 
-def save_file(file):
+def save_file(file, path='static/uploads', drive=app.root_path):
     filename, f_ext = os.path.splitext(file.filename)
     random_uuid = str(uuid4())
     new_filename = random_uuid + f_ext
-    file_path = os.path.join(app.root_path, 'static/uploads', new_filename)
+    file_path = os.path.join(drive, path, new_filename)
     file.save(file_path)
     return (f"{filename}{f_ext}", f"{random_uuid}{f_ext}")
 
@@ -79,9 +79,9 @@ def upload_file():
     # os.listdir('/Volumes') lists drives on MacOS
     form = UploadFileForm()
     if form.is_submitted():
-        # print(form.uploaded_file.data)
+        # print(form.data)
         if form.path.data == '':
-            name_tuple = save_file(form.uploaded_file.data)
+            name_tuple = save_file(file=form.uploaded_file.data)
             file_obj = UploadedFile(path='/static/uploads/',drive='app.root_path',
                 filename=name_tuple[0],uuid_name=name_tuple[1])
             db.session.add(file_obj)
