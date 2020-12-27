@@ -113,23 +113,25 @@ def approve_user():
 @login_required
 @app.route('/approve_user/edit_user',methods=['POST'])
 def edit_user():
+    def console(type,value):
+        return {"type":type,"value":value}
     if current_user.role != 'admin':
-        return "Denied."
+        return console("error","Denied.")
     else:
         user = current_user.verify_valid_token(request.form["token"])
         if user == None:
-            return "Invalid Token. Please refresh page."
+            return console("error","Invalid Token. Please refresh page.")
         elif len(User.query.filter_by(role='admin').all()) == 1 and request.form["role"] == "admin" and request.form["is_active"] == "false":
-            return "You cannot disable the only admin account."
+            return console("warn","You cannot disable the only admin account.")
         try:
             updatedUser = User.query.filter_by(username=request.form["username"]).first()
             active = False if request.form["is_active"] == "false" else True 
             updatedUser.is_active = active
             db.session.commit()
             if active:
-                return f"User '{request.form['username']}' is active."
+                return console("log",f"User '{request.form['username']}' is active.")
             else:
-                return f"User '{request.form['username']}' is not active."
+                return console("log",f"User '{request.form['username']}' is not active.")
         except(err):
             print(err)
-            return "error"
+            return console("error",err)
