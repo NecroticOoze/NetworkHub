@@ -77,6 +77,7 @@ def save_file(file, path='static/uploads', drive=app.root_path):
 @app.route('/upload-file', methods=['GET','POST'])
 def upload_file():
     # os.listdir('/Volumes') lists drives on MacOS
+    # desktop = os.path.join(os.path.join(os.environ['USERPROFILE']), 'Desktop')  #     This is the way to properly get to desktop
     form = UploadFileForm()
     if form.is_submitted():
         # print(form.data)
