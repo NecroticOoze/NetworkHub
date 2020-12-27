@@ -3,6 +3,7 @@ from flask import render_template, url_for, request, redirect, flash
 from flask_login import login_user, current_user, logout_user, login_required
 from app.models import User, UploadedFile
 from app.forms import LoginForm, RegisterForm, UploadFileForm
+from app.mount import list_media_devices, mount, is_mounted, unmount, get_device_name, get_media_path
 from uuid import uuid4
 import os
 
