@@ -113,25 +113,29 @@ def approve_user():
 @login_required
 @app.route('/approve_user/edit_user',methods=['POST'])
 def edit_user():
+    # print(request.json)
+    data = request.json
+    # print(data['is_active'])
+    # print(type(data['is_active'])) TYPE: BOOL
     def console(type,value):
         return {"type":type,"value":value}
     if current_user.role != 'admin':
         return console("error","Denied.")
     else:
-        user = current_user.verify_valid_token(request.form["token"])
+        user = current_user.verify_valid_token(data["token"])
         if user == None:
             return console("error","Invalid Token. Please refresh page.")
-        elif len(User.query.filter_by(role='admin').all()) == 1 and request.form["role"] == "admin" and request.form["is_active"] == "false":
+        elif len(User.query.filter_by(role='admin').all()) == 1 and data["role"] == "admin" and data["is_active"] == "false":
             return console("warn","You cannot disable the only admin account.")
         try:
-            updatedUser = User.query.filter_by(username=request.form["username"]).first()
-            active = False if request.form["is_active"] == "false" else True 
+            updatedUser = User.query.filter_by(username=data["username"]).first()
+            active = data["is_active"] 
             updatedUser.is_active = active
             db.session.commit()
             if active:
-                return console("log",f"User '{request.form['username']}' is active.")
+                return console("log",f"User '{data['username']}' is active.")
             else:
-                return console("log",f"User '{request.form['username']}' is not active.")
+                return console("log",f"User '{data['username']}' is not active.")
         except(err):
             print(err)
             return console("error",err)
