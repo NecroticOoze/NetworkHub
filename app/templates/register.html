@@ -13,14 +13,14 @@
                     {{ form.username.label(class="form-control-label") }}
 
                     {% if form.username.errors %}
-                        {{ form.username(class="form-control form-control is-invalid") }}
-                        <div class="invalid-feedback">
-                            {% for error in form.username.errors %}
-                                <span>{{ error }}</span>
-                            {% endfor %}
-                        </div>
+                    {{ form.username(class="form-control form-control is-invalid") }}
+                    <div class="invalid-feedback">
+                        {% for error in form.username.errors %}
+                        <span>{{ error }}</span>
+                        {% endfor %}
+                    </div>
                     {% else %}
-                        {{ form.username(class="form-control form-control") }}
+                    {{ form.username(class="form-control form-control") }}
                     {% endif %}
                 </div>
                 <div class="form-group">
@@ -41,14 +41,12 @@
 {% endblock content %}
 {% block js %}
 <script>
-    $(document).ready(()=>$("#submit").attr("disabled","disabled"))
-    document.body.addEventListener("change",(event)=>{
-        if (event.target.id == 'confirm_password' || event.target.id == 'password') {
-            if ($("#confirm_password").val() == $("#password").val()) {
-                $("#submit").removeAttr("disabled")
-            } else {
-                $("#submit").attr("disabled","disabled")
-            }
+    $(document).ready(() => $("#submit").attr("disabled", "disabled"))
+    document.getElementById("confirm_password").addEventListener("keyup", (event) => {
+        if ($("#confirm_password").val() == $("#password").val()) {
+            $("#submit").removeAttr("disabled")
+        } else {
+            $("#submit").attr("disabled", "disabled")
         }
     })
 </script>
