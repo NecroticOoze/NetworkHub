@@ -47,14 +47,17 @@ def login():
     form = LoginForm()
     if form.is_submitted():
         user = User.query.filter_by(username=form.username.data).first()
-        if user.is_active == False:
-            flash('Login Unsuccessful. Your account is not yet activated.', 'danger')
-        elif user and bcrypt.check_password_hash(user.password, form.password.data):
-            login_user(user, remember=form.remember_me.data)
-            next_page = request.args.get('next')
-            return redirect(next_page) if next_page else redirect(url_for('home'))
+        if user == None:
+            flash('Login Unsuccessful. Please check username and password.','danger')
         else:
-            flash('Login Unsuccessful. Please check email and password', 'danger')
+            if user.is_active == False:
+                flash('Login Unsuccessful. Your account is not yet activated.', 'danger')
+            elif user and bcrypt.check_password_hash(user.password, form.password.data):
+                login_user(user, remember=form.remember_me.data)
+                next_page = request.args.get('next')
+                return redirect(next_page) if next_page else redirect(url_for('home'))
+            else:
+                flash('Login Unsuccessful. Please check username and password', 'danger')
     return render_template('login.html', active='login', form=form)
 
 @app.route('/logout')
